@@ -1,0 +1,6 @@
+Mongo DB 
+pratiknm1234_db_user
+5VNQrCsow8aESNJD
+
+
+mongodb+srv://pratiknm1234_db_user:5VNQrCsow8aESNJD@tasks.o0v3mmm.mongodb.net/?retryWrites=true&w=majority&appName=Tasks
