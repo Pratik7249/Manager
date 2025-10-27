@@ -1,15 +1,9 @@
-// src/components/TimelineTask.jsx
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 export default function TimelineTask({ task }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: task._id }); // Use the task's ID as the draggable ID
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: task._id });
 
   const style = {
     transform: CSS.Transform.toString(transform),

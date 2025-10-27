@@ -1,0 +1,16 @@
+/* Highlight days that have tasks in react-calendar */
+.day-with-task {
+  background-color: #fff6c2 !important;
+  border-radius: 50%;
+}
+
+/* Small UI helpers */
+input, textarea, select {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #7aa7ff;
+  box-shadow: 0 0 0 3px rgba(74, 124, 255, 0.15);
+}

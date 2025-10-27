@@ -1,11 +1,8 @@
-// src/components/TaskList.jsx
 import DraggableTask from "./DraggableTask";
 import { useDroppable } from "@dnd-kit/core";
 
-export default function TaskList({ tasks }) { // Receives unscheduled tasks
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'unscheduled', // This is the ID for the "Unscheduled" drop zone
-  });
+export default function TaskList({ tasks }) {
+  const { setNodeRef, isOver } = useDroppable({ id: 'unscheduled' });
 
   return (
     <div
@@ -25,7 +22,6 @@ export default function TaskList({ tasks }) { // Receives unscheduled tasks
         </p>
       )}
       {tasks.map((task) => (
-        // Use DraggableTask instead of TaskCard
         <DraggableTask key={task._id} task={task} />
       ))}
     </div>

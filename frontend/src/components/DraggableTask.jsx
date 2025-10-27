@@ -1,4 +1,3 @@
-// src/components/DraggableTask.jsx
 import { useDraggable } from "@dnd-kit/core";
 import { useTasks } from "../context/TaskContext";
 
@@ -8,10 +7,9 @@ export default function DraggableTask({ task }) {
     id: task._id,
   });
 
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    zIndex: 100, // Make sure it renders on top while dragging
-  } : undefined;
+  const style = transform
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 100 }
+    : undefined;
 
   return (
     <div
@@ -29,7 +27,7 @@ export default function DraggableTask({ task }) {
       }}
       {...attributes}
       {...listeners}
-      onClick={() => openTaskModal(task)} // Also open modal on click
+      onClick={() => openTaskModal(task)}
     >
       {task.title}
     </div>
