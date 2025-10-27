@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
 const TaskContext = createContext();
-
 const genId = () => `local_${Math.random().toString(36).substring(2, 11)}`;
 
 export const TaskProvider = ({ children }) => {
@@ -76,8 +75,7 @@ export const TaskProvider = ({ children }) => {
   };
 
   const openTaskModal = (task) => {
-    const freshTask = tasks.find(t => t._id === task._id);
-    setSelectedTask(freshTask || task);
+    setSelectedTask(task); // can be a normal task or a card instance
   };
   const closeTaskModal = () => setSelectedTask(null);
 

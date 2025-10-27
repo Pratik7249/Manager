@@ -3,9 +3,7 @@ import { useTasks } from "../context/TaskContext";
 
 export default function DraggableTask({ task }) {
   const { openTaskModal } = useTasks();
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: task._id,
-  });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: task._id });
 
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 100 }
@@ -23,11 +21,14 @@ export default function DraggableTask({ task }) {
         marginBottom: 8,
         fontSize: '0.9em',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        cursor: 'grab',
+        cursor: 'pointer',
+        userSelect: 'none',
+        touchAction: 'none',    // better touch behaviour
+        willChange: 'transform' // smoother drag
       }}
       {...attributes}
       {...listeners}
-      onClick={() => openTaskModal(task)}
+      onClick={() => openTaskModal(task)}  // click = open popup
     >
       {task.title}
     </div>

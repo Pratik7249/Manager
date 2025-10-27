@@ -1,9 +1,20 @@
 import { useTasks } from "../context/TaskContext";
+import { useCards } from "../context/CardContext";
 import { format, formatDistanceToNow, isPast, parseISO } from 'date-fns';
 
 export default function TaskDetailModal() {
-  const { selectedTask, closeTaskModal, toggleSubTask, deleteTask, updateTask } = useTasks();
+  const {
+    selectedTask, closeTaskModal,
+    toggleSubTask, deleteTask, updateTask
+  } = useTasks();
+
+  const {
+    setOccurrenceCompleted, toggleOccurrenceSub
+  } = useCards();
+
   if (!selectedTask) return null;
+
+  const isCardInstance = !!selectedTask.isCardInstance;
 
   let dueDateInfo = "No due date set";
   let dateColor = "#555";
@@ -18,15 +29,23 @@ export default function TaskDetailModal() {
     }
   }
 
-  const handleSubtaskToggle = (subTaskId, currentCompleted) =>
-    toggleSubTask(selectedTask._id, subTaskId, !currentCompleted);
-
-  const handleDelete = () => {
-    if (window.confirm("Delete this task?")) deleteTask(selectedTask._id);
+  const handleToggleComplete = () => {
+    if (isCardInstance) setOccurrenceCompleted(selectedTask._id, !selectedTask.completed);
+    else updateTask(selectedTask._id, { completed: !selectedTask.completed });
   };
 
-  const handleToggleComplete = () =>
-    updateTask(selectedTask._id, { completed: !selectedTask.completed });
+  const handleDelete = () => {
+    if (isCardInstance) {
+      alert("Card instances are generated from templates. Delete or change schedule in Manage Cards.");
+    } else {
+      if (window.confirm("Delete this task?")) deleteTask(selectedTask._id);
+    }
+  };
+
+  const handleSubToggle = (subId, current) => {
+    if (isCardInstance) toggleOccurrenceSub(selectedTask._id, subId);
+    else toggleSubTask(selectedTask._id, subId, !current);
+  };
 
   return (
     <div
@@ -64,7 +83,7 @@ export default function TaskDetailModal() {
               {selectedTask.subTasks.map((sub) => (
                 <li key={sub._id} style={{ textDecoration: sub.completed ? "line-through" : "none", color: sub.completed ? "#888" : "#000", background: '#f9f9f9', padding: '10px 12px', borderRadius: 4 }}>
                   <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                    <input type="checkbox" checked={sub.completed} onChange={() => handleSubtaskToggle(sub._id, sub.completed)} style={{ marginRight: 10, width: 16, height: 16 }} />
+                    <input type="checkbox" checked={sub.completed} onChange={() => handleSubToggle(sub._id, sub.completed)} style={{ marginRight: 10, width: 16, height: 16 }} />
                     {sub.text}
                   </label>
                 </li>
@@ -78,7 +97,7 @@ export default function TaskDetailModal() {
             {selectedTask.completed ? "Mark as Incomplete" : "Mark as Done"}
           </button>
           <button onClick={handleDelete} style={{ background: "#dc3545", color: "#fff", border: 'none', padding: '10px 15px', borderRadius: 5 }}>
-            Delete Task
+            {isCardInstance ? "Edit Card…" : "Delete Task"}
           </button>
         </div>
       </div>

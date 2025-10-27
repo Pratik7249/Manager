@@ -18,6 +18,7 @@ export default function Navbar() {
         <h2 style={{ margin: 0 }}>TaskManager</h2>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: "20px" }}>
           <li><Link to="/dashboard" style={{ color: "#fff", textDecoration: "none" }}>Dashboard</Link></li>
+          <li><Link to="/cards" style={{ color: "#fff", textDecoration: "none" }}>Manage Cards</Link></li>
           <li><Link to="/profile" style={{ color: "#fff", textDecoration: "none" }}>Profile</Link></li>
         </ul>
       </div>

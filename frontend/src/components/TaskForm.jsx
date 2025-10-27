@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTasks } from "../context/TaskContext";
 
+const today = () => new Date().toISOString().split("T")[0];
+
 export default function TaskForm() {
   const { addTask } = useTasks();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(today()); // default = today
   const [recurrence, setRecurrence] = useState("none");
   const [subTaskText, setSubTaskText] = useState("");
   const [subTasks, setSubTasks] = useState([]);
@@ -14,26 +16,21 @@ export default function TaskForm() {
   const handleAddSubtask = (e) => {
     e.preventDefault();
     if (!subTaskText.trim()) return;
-    const newSubTask = { text: subTaskText, completed: false };
-    setSubTasks((prev) => [...prev, newSubTask]);
+    setSubTasks(prev => [...prev, { text: subTaskText, completed: false }]);
     setSubTaskText("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-
-    const newTask = {
+    addTask({
       title,
       description,
       dueDate: dueDate || null,
       recurrence: { type: recurrence },
       subTasks
-    };
-
-    addTask(newTask);
-
-    setTitle(""); setDescription(""); setDueDate("");
+    });
+    setTitle(""); setDescription(""); setDueDate(today());
     setRecurrence("none"); setSubTasks([]);
   };
 
@@ -69,10 +66,10 @@ export default function TaskForm() {
             onChange={(e) => setSubTaskText(e.target.value)}
             style={{ padding: 10, flex: 1 }}
           />
-        <button onClick={handleAddSubtask} style={{ padding: "0 15px" }}>Add</button>
+          <button onClick={handleAddSubtask} style={{ padding: "0 15px" }}>Add</button>
         </div>
         <ul style={{ listStyle: "none", paddingLeft: 0, margin: "5px 0 0 0" }}>
-          {subTasks.map((sub, i) => (<li key={i} style={{ fontSize: "0.9em" }}>- {sub.text}</li>))}
+          {subTasks.map((sub, index) => (<li key={index} style={{ fontSize: "0.9em" }}>- {sub.text}</li>))}
         </ul>
       </div>
 
