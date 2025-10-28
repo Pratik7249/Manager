@@ -45,6 +45,11 @@ export default function Navbar({ user, logout }) {
               Calendar
             </Link>
           </li>
+          <li>
+            <Link to="/progress" style={{ color: "#fff", textDecoration: "none" }}>
+              Progress
+            </Link>
+          </li>
         </ul>
       </div>
 
