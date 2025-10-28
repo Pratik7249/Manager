@@ -7,7 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { useTasks } from "../context/TaskContext";
 import { parseISO, isValid } from "date-fns";
-import { Box, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material"; 
 
 export default function CalendarPage() {
   const { tasks, openTaskModal } = useTasks();
