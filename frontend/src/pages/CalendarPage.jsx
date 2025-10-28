@@ -11,7 +11,7 @@ import { Box, Paper } from "@mui/material";
 
 export default function CalendarPage() {
   const { tasks, openTaskModal } = useTasks();
-  const calendarRef = useRef(null);
+  const calendarRef = useRef(null); 
 
   const events = useMemo(() => {
     return tasks
