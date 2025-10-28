@@ -15,41 +15,49 @@ import {
   MouseSensor,
   TouchSensor,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { set, parseISO } from "date-fns";
 
 export default function Dashboard() {
   const { tasks, loading, updateTask } = useTasks();
 
-  // Sensors so a simple click doesn’t start dragging
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
   );
 
-  const scheduledTasks = tasks.filter(t => t.dueDate);
-  const unscheduledTasks = tasks.filter(t => !t.dueDate);
+  const scheduledTasks = tasks.filter((t) => t.dueDate);
+  const unscheduledTasks = tasks.filter((t) => !t.dueDate);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over) return;
 
     const taskId = String(active.id);
-    const overId = String(over.id);
-    const task = tasks.find(t => t._id === taskId);
+    const overId = String(over.id); // "unscheduled" or "yyyy-MM-dd"
+    const task = tasks.find((t) => t._id === taskId);
     if (!task) return;
 
     if (overId === "unscheduled") {
       if (task.dueDate) updateTask(taskId, { dueDate: null });
-    } else {
-      const currentDay = task.dueDate ? parseISO(task.dueDate).toISOString().split("T")[0] : null;
-      if (overId !== currentDay) {
-        const overDay = parseISO(overId);
-        const original = task.dueDate ? parseISO(task.dueDate) : new Date();
-        const newDue = set(overDay, { hours: original.getHours(), minutes: original.getMinutes() });
-        updateTask(taskId, { dueDate: newDue.toISOString() });
-      }
+      return;
+    }
+
+    // Compare to current task day (UTC-safe)
+    const currentDay = task.dueDate
+      ? parseISO(task.dueDate).toISOString().slice(0, 10)
+      : null;
+
+    if (overId !== currentDay) {
+      // Build a local date (avoid UTC shift)
+      const overDayLocal = new Date(`${overId}T00:00:00`);
+      const original = task.dueDate ? parseISO(task.dueDate) : new Date();
+      const newDue = set(overDayLocal, {
+        hours: original.getHours(),
+        minutes: original.getMinutes()
+      });
+      updateTask(taskId, { dueDate: newDue.toISOString() });
     }
   };
 
@@ -58,32 +66,46 @@ export default function Dashboard() {
       <div>
         <Navbar />
         <main style={{ padding: 20, background: "#f4f7fa", minHeight: "calc(100vh - 60px)" }}>
-          <div style={{ display: "flex", gap: 20, maxWidth: 1400, margin: "0 auto" }}>
-            {/* Main column */}
-            <div style={{ flex: 2.5, display: "flex", flexDirection: "column", gap: 20 }}>
-              <h1>Task Manager 📝</h1>
+          <div
+            style={{
+              maxWidth: 1400,
+              margin: "0 auto",
+              display: "grid",
+              gridTemplateColumns: "minmax(0,1fr) 360px",
+              gap: 20
+            }}
+          >
+            <section style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <h1 style={{ margin: "6px 0 0" }}>Task Manager 📝</h1>
               <TaskForm />
-
-              {/* Week timeline (only scheduled tasks) */}
-              <Timeline tasks={scheduledTasks} />
-
-              {/* Unscheduled list */}
-              <h3 style={{ marginTop: 0 }}>Unscheduled Tasks (Drag to timeline)</h3>
-              {loading ? <p>Loading tasks...</p> : <TaskList tasks={unscheduledTasks} />}
-
-              {/* NEW: All Tasks list */}
+              <div>
+                <h3 style={{ marginTop: 0 }}>This Week&apos;s Timeline</h3>
+                <Timeline tasks={scheduledTasks} />
+              </div>
+              <div>
+                <h3 style={{ marginTop: 0 }}>Unscheduled Tasks (Drag to timeline)</h3>
+                {loading ? <p>Loading tasks...</p> : <TaskList tasks={unscheduledTasks} />}
+              </div>
               <AllTasks />
-            </div>
+            </section>
 
-            {/* Right sidebar */}
-            <aside style={{ flex: 1, paddingTop: "70px", display: "flex", flexDirection: "column", gap: 20 }}>
+            <aside
+              style={{
+                position: "sticky",
+                top: 84,
+                alignSelf: "start",
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+                maxHeight: "calc(100vh - 100px)",
+                overflow: "auto"
+              }}
+            >
               <CalendarView />
               <UpcomingTasks />
             </aside>
           </div>
         </main>
-
-        {/* Popup for details & minor tasks */}
         <TaskDetailModal />
       </div>
     </DndContext>

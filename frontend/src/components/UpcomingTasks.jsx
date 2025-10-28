@@ -4,13 +4,15 @@ import { addDays, formatDistanceToNow, parseISO } from 'date-fns';
 
 export default function UpcomingTasks() {
   const { tasks, openTaskModal } = useTasks();
-  const { getInstancesForRange } = useCards();
+  const cardsCtx = useCards?.();
+  const getInstancesForRange = cardsCtx?.getInstancesForRange;
 
   const start = new Date();
   const end = addDays(start, 30);
-  const cardInst = getInstancesForRange(start, end);
+  const cardInst = typeof getInstancesForRange === "function"
+    ? getInstancesForRange(start, end)
+    : [];
 
-  // normalize to comparable objects
   const upcoming = [
     ...tasks.filter(t => !t.completed && t.dueDate),
     ...cardInst.filter(i => !i.completed && i.dueDate)
